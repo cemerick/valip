@@ -69,6 +69,14 @@
   (is (decimal-string? "  8  "))
   (is (decimal-string? "1.1"))
   (is (decimal-string? "3.14159"))
+  (is (not (decimal-string? "N")))
+  (is (not (decimal-string? "M")))
+  (is (decimal-string? "3N"))
+  (is (decimal-string? "3M"))
+  (is (not (decimal-string? "3.N")))
+  (is (decimal-string? "3.M"))
+  (is (not (decimal-string? "3.14159N")))
+  (is (decimal-string? "3.14159M"))
   (is (not (decimal-string? "foo")))
   (is (not (decimal-string? "10x")))
   (is (not (decimal-string? ""))))
@@ -96,6 +104,32 @@
   (is ((lte 10) "10"))
   (is (not ((lte 10) "11")))
   (is (not ((lte 10) ""))))
+
+(deftest comparing-bigint-bigdec
+  (are [input is-lt is-lte is-gte is-gt]
+    (and (= is-lt  (boolean ((lt  10) input)))
+         (= is-lte (boolean ((lte 10) input)))
+         (= is-gte (boolean ((gte 10) input)))
+         (= is-gt  (boolean ((gt  10) input))))
+    "9"      true  true  false false
+    "9N"     true  true  false false
+    "9M"     true  true  false false
+    "9."     true  true  false false
+    "9.M"    true  true  false false
+    "9.99"   true  true  false false
+    "9.99M"  true  true  false false
+    "10"     false true  true  false
+    "10N"    false true  true  false
+    "10M"    false true  true  false
+    "10."    false true  true  false
+    "10.M"   false true  true  false
+    "10.0"   false true  true  false
+    "10.0M"  false true  true  false
+    "10.01"  false false true  true
+    "10.01M" false false true  true
+    "11"     false false true  true
+    "11N"    false false true  true
+    "11M"    false false true  true))
 
 (deftest test-over
   (is (= over gt)))
