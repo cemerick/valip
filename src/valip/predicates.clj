@@ -6,6 +6,8 @@ Clojure implementations."
             [cljs.reader :refer [read-string]])
   (:refer-clojure :exclude [read-string]))
 
+(def ^:private number-re #"\s*[+-]?\d+(\.\d*M?|M|N)?\s*")
+
 (defn present?
   "Returns false if x is nil or blank, true otherwise."
   [x]
@@ -49,7 +51,7 @@ Clojure implementations."
 (defn decimal-string?
   "Returns true if the string represents a decimal number."
   [s]
-  (boolean (re-matches #"\s*[+-]?\d+(\.\d*M?|M|N)?\s*" s)))
+  (boolean (re-matches number-re s)))
 
 (defn digits?
   "Returns true if a string consists only of numerical digits."
@@ -62,7 +64,7 @@ Clojure implementations."
   (boolean (re-matches #"[A-Za-z0-9]+" s)))
 
 (defn- parse-number [x]
-  (if (and (string? x) (re-matches #"\s*[+-]?\d+(\.\d*M?|M|N)?\s*" x))
+  (if (and (string? x) (re-matches number-re x))
     (read-string x)))
 
 (defn gt
